@@ -9,7 +9,7 @@ import Foundation
 
 extension FourCharCode {
     
-    public init(fourByteString string: String) throws {
+    init(fourByteString string: String) throws {
         // convert four-character string containing MacOSRoman characters to OSType
         // (this is safer than using UTGetOSTypeFromString, which silently fails if string is malformed)
         guard let data = string.data(using: .macOSRoman) else {
@@ -26,7 +26,7 @@ extension FourCharCode {
 
 extension String {
     
-    public init(fourCharCode: OSType) {
+    init(fourCharCode: OSType) {
         // convert an OSType to four-character string containing MacOSRoman characters
         self.init(UTCreateStringForOSType(fourCharCode).takeRetainedValue() as String)
     }
