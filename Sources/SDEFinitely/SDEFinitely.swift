@@ -197,7 +197,7 @@ public class SDEFParser {
 
 // convenience function
 
-public func getScriptingDefinition(_ url: URL) throws -> Data {
+public func readSDEF(from url: URL) throws -> Data {
     var sdef: Unmanaged<CFData>?
     let err = OSACopyScriptingDefinitionFromURL(url as NSURL, 0, &sdef)
     if err != 0 {
