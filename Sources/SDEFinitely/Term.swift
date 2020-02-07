@@ -124,7 +124,7 @@ public struct CommandTerm: TermProtocol {
         return "<Command:\(self.name)=\(String(fourCharCode: self.eventClass))\(String(fourCharCode: self.eventID))(\(params))>"
     }
     
-    mutating func addParameter(_ name: String, code: OSType) {
+    public mutating func addParameter(_ name: String, code: OSType) {
         let paramDef = KeywordTerm(name: name, code: code, kind: .parameter)
         self.parameters.append(paramDef)
     }
