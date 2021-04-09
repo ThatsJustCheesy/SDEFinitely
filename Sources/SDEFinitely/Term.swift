@@ -19,6 +19,14 @@ public class SDEFError: Error {
     
 }
 
+public struct NoSDEF: LocalizedError {
+    
+    public var errorDescription: String? {
+        "Resource has no SDEF data."
+    }
+    
+}
+
 extension SDEFError: CustomStringConvertible {
     
     public var description: String {

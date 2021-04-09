@@ -200,8 +200,11 @@ public class SDEFParser {
 public func readSDEF(from url: URL) throws -> Data {
     var sdef: Unmanaged<CFData>?
     let err = OSACopyScriptingDefinitionFromURL(url as NSURL, 0, &sdef)
-    if err != 0 {
+    guard err == 0 else {
         throw SDEFError(message: "Can't retrieve SDEF (error \(err)).")
     }
-    return sdef!.takeRetainedValue() as Data
+    guard let sdef_ = sdef else {
+        throw NoSDEF()
+    }
+    return sdef_.takeRetainedValue() as Data
 }
