@@ -128,7 +128,8 @@ public class SDEFParser {
                 // (note: record and value types also define plurals, but we only use plurals for element names and elements should always be classes, so we ignore those)
                 let plural = element.attribute(forName: "plural")?.stringValue ?? (
                     (name == "text" || name.hasSuffix("s")) ? name : "\(name)s") // SDEF spec says to append 's' to name when plural attribute isn't given; in practice, appending 's' doesn't work so well for names already ending in 's' (e.g. 'print settings'), nor for 'text' (which is AppleScript-defined), so special-case those here (note that macOS's SDEF->AETE converter will append "s" to singular names that already end in "s"; nothing we can do about that)
-                delegate.addClass(ClassTerm(name: name, pluralName: plural, code: code))
+                let inheritsFromName = element.attribute(forName: "inherits")?.stringValue
+                delegate.addClass(ClassTerm(name: name, pluralName: plural, code: code, inheritsFromName: inheritsFromName))
             case "class-extension":
                 guard let name = self.attribute("extends", of: element) else {
                     throw SDEFError(message: "Missing 'extends' attribute for class-extension.")

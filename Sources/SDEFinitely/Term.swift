@@ -94,11 +94,14 @@ public struct ClassTerm: KeywordTermProtocol {
     public let name: String
     public let pluralName: String
     public let code: OSType
+    /// The name of the class that this class inherits from, if any.
+    public let inheritsFromName: String?
     
-    public init(name: String, pluralName: String, code: OSType) {
+    public init(name: String, pluralName: String, code: OSType, inheritsFromName: String?) {
         self.name = name
         self.pluralName = pluralName
         self.code = code
+        self.inheritsFromName = inheritsFromName
     }
 }
 
