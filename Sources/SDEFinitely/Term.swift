@@ -48,6 +48,7 @@ extension SDEFError: CustomStringConvertible {
 public protocol TermProtocol {
     
     var name: String { get }
+    var termDescription: String? { get }
     
 }
 
@@ -70,10 +71,13 @@ public struct KeywordTerm: KeywordTermProtocol { // type/enumerator/property/ele
     public let code: OSType
     public let kind: Kind
     
-    public init(name: String, code: OSType, kind: Kind) {
+    public let termDescription: String?
+    
+    public init(name: String, code: OSType, kind: Kind, description: String?) {
         self.name = name
         self.code = code
         self.kind = kind
+        self.termDescription = description
     }
     
 }
@@ -97,11 +101,14 @@ public struct ClassTerm: KeywordTermProtocol {
     /// The name of the class that this class inherits from, if any.
     public let inheritsFromName: String?
     
-    public init(name: String, pluralName: String, code: OSType, inheritsFromName: String?) {
+    public let termDescription: String?
+    
+    public init(name: String, pluralName: String, code: OSType, inheritsFromName: String?, description: String?) {
         self.name = name
         self.pluralName = pluralName
         self.code = code
         self.inheritsFromName = inheritsFromName
+        self.termDescription = description
     }
 }
 
@@ -123,11 +130,14 @@ public struct CommandTerm: TermProtocol {
     public let eventID: OSType
     
     private(set) public var parameters: [KeywordTerm] = []
+    
+    public let termDescription: String?
 
-    public init(name: String, eventClass: OSType, eventID: OSType) {
+    public init(name: String, eventClass: OSType, eventID: OSType, description: String?) {
         self.name = name
         self.eventClass = eventClass
         self.eventID = eventID
+        self.termDescription = description
     }
     
     public var description: String {
@@ -136,7 +146,7 @@ public struct CommandTerm: TermProtocol {
     }
     
     public mutating func addParameter(_ name: String, code: OSType) {
-        let paramDef = KeywordTerm(name: name, code: code, kind: .parameter)
+        let paramDef = KeywordTerm(name: name, code: code, kind: .parameter, description: termDescription)
         self.parameters.append(paramDef)
     }
     

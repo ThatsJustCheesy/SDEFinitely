@@ -82,7 +82,7 @@ public class SDEFParser {
     
     private func parse(typeOfElement element: XMLElement) throws -> (String, OSType) { // class, record-type, value-type
         let (name, code) = try parse(keywordElement: element)
-        delegate.addType(KeywordTerm(name: name, code: code, kind: .type))
+        delegate.addType(KeywordTerm(name: name, code: code, kind: .type, description: attribute("description", of: element)))
         codesForClassNames[name] = code
         try parse(synonymsOfTypeElement: element, name: name, code: code)
         return (name, code)
@@ -95,13 +95,13 @@ public class SDEFParser {
             
             if let synName = synName {
                 if let synCode = synCode {
-                    delegate.addType(KeywordTerm(name: synName, code: synCode, kind: .type))
+                    delegate.addType(KeywordTerm(name: synName, code: synCode, kind: .type, description: attribute("description", of: element)))
                 } else {
-                    delegate.addType(KeywordTerm(name: synName, code: code, kind: .type))
+                    delegate.addType(KeywordTerm(name: synName, code: code, kind: .type, description: attribute("description", of: element)))
                 }
             } else {
                 if let synCode = synCode {
-                    delegate.addType(KeywordTerm(name: name, code: synCode, kind: .type))
+                    delegate.addType(KeywordTerm(name: name, code: synCode, kind: .type, description: attribute("description", of: element)))
                 } else {
                     throw SDEFError(message: "Missing 'name'/'code' attribute for synonym.")
                 }
@@ -112,7 +112,7 @@ public class SDEFParser {
     private func parse(propertiesOfElement element: XMLElement) throws { // class, class-extension, record-type, value-type
         for element in element.elements(forName: "property") {
             let (name, code) = try parse(keywordElement: element)
-            delegate.addProperty(KeywordTerm(name: name, code: code, kind: .property))
+            delegate.addProperty(KeywordTerm(name: name, code: code, kind: .property, description: attribute("description", of: element)))
         }
     }
     
@@ -129,7 +129,7 @@ public class SDEFParser {
                 let plural = element.attribute(forName: "plural")?.stringValue ?? (
                     (name == "text" || name.hasSuffix("s")) ? name : "\(name)s") // SDEF spec says to append 's' to name when plural attribute isn't given; in practice, appending 's' doesn't work so well for names already ending in 's' (e.g. 'print settings'), nor for 'text' (which is AppleScript-defined), so special-case those here (note that macOS's SDEF->AETE converter will append "s" to singular names that already end in "s"; nothing we can do about that)
                 let inheritsFromName = element.attribute(forName: "inherits")?.stringValue
-                delegate.addClass(ClassTerm(name: name, pluralName: plural, code: code, inheritsFromName: inheritsFromName))
+                delegate.addClass(ClassTerm(name: name, pluralName: plural, code: code, inheritsFromName: inheritsFromName, description: attribute("description", of: element)))
             case "class-extension":
                 guard let name = self.attribute("extends", of: element) else {
                     throw SDEFError(message: "Missing 'extends' attribute for class-extension.")
@@ -147,11 +147,11 @@ public class SDEFParser {
             case "enumeration":
                 for element in element.elements(forName: "enumerator") {
                     let (name, code) = try parse(keywordElement: element)
-                    delegate.addEnumerator(KeywordTerm(name: name, code: code, kind: .enumerator))
+                    delegate.addEnumerator(KeywordTerm(name: name, code: code, kind: .enumerator, description: attribute("description", of: element)))
                 }
             case "command", "event":
                 let (name, eventClass, eventID) = try parse(commandElement: element)
-                var command = CommandTerm(name: name, eventClass: eventClass, eventID: eventID)
+                var command = CommandTerm(name: name, eventClass: eventClass, eventID: eventID, description: attribute("description", of: element))
                 for element in element.elements(forName: "parameter") {
                     let (name, code) = try parse(keywordElement: element)
                     command.addParameter(name, code: code)
